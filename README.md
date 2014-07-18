@@ -5,7 +5,7 @@ Compute N(z) for DES catalogs using sparse format
 
 
 ### USE
-Check comments
+Check comments and wiki page
 
 ### DATA
 For now only works with the SVA Gold catalog.
