@@ -1,7 +1,7 @@
 get_Nz
 ======
 
-Compute N(z) for DES catalogs using sparse format
+Compute N(z) for DES catalogs using sparse format for photo-z PDFs
 
 
 ### USE
