@@ -45,7 +45,7 @@ range_z='%.1f_%.1f' % (Mk['TPZ_ZPHOT'][0],Mk['TPZ_ZPHOT'][1])
 # This includes, RA,DEC, MAG_AUTO_I, MAG_DETMODEL_[G,R,I,Z], MODEST_CLASS, COADD_OBJECTS_ID
 # and TPZ_ZPHOT (the mean of the redshift pdf) and TPZ_ZCONF (similar to ODDS in BPZ is a 0 to 1 value)
 # quantifying the shape of the pdf around the mean, usually one picks value with ZCONF > 0.5
-fitsfile='sva1_gold_1.0_short_sg.last.fits'
+fitsfile='../sva1_gold_1.0_short_sg.last.fits'
 
 # Return the mask given the cuts defined in Mk, output_keys are extra returns
 # (optional) masked, in that case those values will be: e.g.: Bmask['RA'] or
@@ -66,11 +66,11 @@ print '*** Number of galaxies : ', Ngal ; print
 # and get the indexes indicated by Bmask
 # And also reads the header
 print '*** Reading Sparse files...\n'
-P2=pf.open('sva1_gold_1.0.Psparse_all.last.fits')
+P2=pf.open('../sva1_gold_1.0.Psparse_all.last.fits')
 zz=P2[1].data.field('redshift')
 SP = P2[2].data.field('Sparse_indices')[masked_data]
 P2.close()
-head = ps.read_header('sva1_gold_1.0.Psparse_all.last.fits')
+head = ps.read_header('../sva1_gold_1.0.Psparse_all.last.fits')
 z = head['z']
 dz=zz[1]-zz[0]
 
