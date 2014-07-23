@@ -21,14 +21,15 @@ import sys,os
 # For TPZ_SG_CLASS the range goes from 0 (galaxies) to 1 (stars)
 
 
+#The default values are for the LSS benchmark cuts
 Mk={}
 Mk['MAG_AUTO_I']=[18,22.5]
 Mk['RA']=[60,95]
 Mk['DEC']=[-62,-40]
-Mk['MODEST_CLASS']=[0]
-#Mk['TPZ_SG_CLASS']=[0.9,1.0] #TPZ PROB S/G Classification
+Mk['MODEST_CLASS']=[1] # USE MODEST_CLASS or TPZ_SG_CLASS between 0 (galaxies) and 1 (stars)
+#Mk['TPZ_SG_CLASS']=[0.0,0.8] #TPZ PROB S/G Classification
 Mk['TPZ_ZCONF']=[0.6,1.1]  #ZCONF, goodness of the PDF, quality cut
-Mk['TPZ_ZPHOT']=[0.0,1.5] #REDSHIFT BIN FROM TPZ
+Mk['TPZ_ZPHOT']=[0.2,0.4] #REDSHIFT BIN FROM TPZ
 Mk['MAG_DETMODEL_G-MAG_DETMODEL_R']=[0,3]
 Mk['MAG_DETMODEL_R-MAG_DETMODEL_I']=[0,2]
 Mk['MAG_DETMODEL_I-MAG_DETMODEL_Z']=[0,3]
@@ -45,7 +46,7 @@ range_z='%.1f_%.1f' % (Mk['TPZ_ZPHOT'][0],Mk['TPZ_ZPHOT'][1])
 # This includes, RA,DEC, MAG_AUTO_I, MAG_DETMODEL_[G,R,I,Z], MODEST_CLASS, COADD_OBJECTS_ID
 # and TPZ_ZPHOT (the mean of the redshift pdf) and TPZ_ZCONF (similar to ODDS in BPZ is a 0 to 1 value)
 # quantifying the shape of the pdf around the mean, usually one picks value with ZCONF > 0.5
-fitsfile='../sva1_gold_1.0_short_sg.last.fits'
+fitsfile='sva1_gold_1.0_short_sg.last.fits'
 
 # Return the mask given the cuts defined in Mk, output_keys are extra returns
 # (optional) masked, in that case those values will be: e.g.: Bmask['RA'] or
@@ -66,11 +67,11 @@ print '*** Number of galaxies : ', Ngal ; print
 # and get the indexes indicated by Bmask
 # And also reads the header
 print '*** Reading Sparse files...\n'
-P2=pf.open('../sva1_gold_1.0.Psparse_all.last.fits')
+P2=pf.open('sva1_gold_1.0.Psparse_all.last.fits')
 zz=P2[1].data.field('redshift')
 SP = P2[2].data.field('Sparse_indices')[masked_data]
 P2.close()
-head = ps.read_header('../sva1_gold_1.0.Psparse_all.last.fits')
+head = ps.read_header('sva1_gold_1.0.Psparse_all.last.fits')
 z = head['z']
 dz=zz[1]-zz[0]
 
