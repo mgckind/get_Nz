@@ -3,7 +3,6 @@ get_Nz
 
 Compute N(z) for DES catalogs using sparse format for photo-z PDFs for SVA 1.0 Gold
 Optimize to the benchmark LSS catalogs but can be easily change for any required cuts
-Wiki page: https://cdcvs.fnal.gov/redmine/projects/des-photoz/wiki/TPZ_photo-z_PDF_and_N(z)_using_sparse_representation_SVA1_Gold
 
 
 ### Requirements
