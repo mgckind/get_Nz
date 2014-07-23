@@ -17,7 +17,7 @@ import sys,os
 # What's there is what's included
 # For a range of values used a [min_val, max_val]
 # For equalities used [value]
-# You should use only one of the S/G keys
+# You should use only one of the S/G keys AND COMMENT THE OTHER ONE
 # For TPZ_SG_CLASS the range goes from 0 (galaxies) to 1 (stars)
 
 
