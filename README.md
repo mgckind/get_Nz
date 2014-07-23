@@ -6,6 +6,10 @@ Optimize to the benchmark LSS catalogs but can be easily change for any required
 
 
 ### USE
+
+#### Requirements
+You need to have **numpy**, **scipy** (optional) and "pyfits":http://www.stsci.edu/institute/software_hardware/pyfits or astropy (and matplotlib for plotting)
+
 Make sure the fits files (from wiki) are in the same folder
 Check comments on the files and wiki page for more info
 
