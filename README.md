@@ -13,6 +13,9 @@ Check comments on the files and wiki page for more info
 For now only works with the SVA Gold 1.0 catalog. 
 To get the data go the the DES Wiki (Under photo-z wiki)
 
+### Note
+Check https://github.com/mgckind/SparsePz for more information about the sparse representation
+
 #### Contact
 mcarras2@illinois.edu
 
