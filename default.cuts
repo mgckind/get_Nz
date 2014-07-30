@@ -1,0 +1,22 @@
+# This is the mask used to get N(z) and galaxies in general
+# for sva1_gold_1.0 all the objects
+# What's there is what's included
+# For a range of values used a [min_val, max_val]
+# For equalities used [value]
+# You should use only one of the S/G keys AND COMMENT THE OTHER ONE
+# For TPZ_SG_CLASS the range goes from 0 (galaxies) to 1 (stars)
+# The default values are for the LSS benchmark cuts
+# Modify for your convience
+# Comment any line to avoid cut in that parameter
+# Use brackets!
+#
+MAG_AUTO_I  =  [18,22.5]
+RA = [60,95]
+DEC = [-62,-40]
+MODEST_CLASS = [1] # USE MODEST_CLASS or TPZ_SG_CLASS between 0 (galaxies) and 1 (stars)
+#TPZ_SG_CLASS = [0.0,0.8] #TPZ PROB S/G Classification
+TPZ_ZCONF = [0.9,1.1]  #ZCONF, goodness of the PDF, quality cut
+TPZ_ZPHOT = [0.2,0.21] #REDSHIFT BIN FROM TPZ
+MAG_DETMODEL_G-MAG_DETMODEL_R = [0,3]
+MAG_DETMODEL_R-MAG_DETMODEL_I = [0,2]
+MAG_DETMODEL_I-MAG_DETMODEL_Z = [0,3]
