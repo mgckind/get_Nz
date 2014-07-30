@@ -6,7 +6,7 @@
 # You should use only one of the S/G keys AND COMMENT THE OTHER ONE
 # For TPZ_SG_CLASS the range goes from 0 (galaxies) to 1 (stars)
 # The default values are for the LSS benchmark cuts
-# Modify for your convience
+# Modify for your convenience
 # Comment any line to avoid cut in that parameter
 # Use brackets!
 #
