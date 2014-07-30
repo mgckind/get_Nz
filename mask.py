@@ -3,7 +3,6 @@
 __author__ = "Matias Carrasco Kind"
 from numpy import *
 import pyfits as pf
-import matplotlib.pyplot as plt
 import sys, os
 
 
