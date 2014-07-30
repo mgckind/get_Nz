@@ -7,7 +7,7 @@ it ca be used wot a pre-defined mask or from a list of coadd_object_ids
 
 
 ### Requirements
-You need to have:
+You need :
 * **numpy**
 * **scipy** (optional)
 * [**pyfits**](http://www.stsci.edu/institute/software_hardware/pyfits) or **astropy**
@@ -25,7 +25,7 @@ The template fot the cuts file is provided
 
 For help:
 
-    python compute_Nz -h
+    python compute_Nz.py -h
 
 ### Data
 For now only works with the SVA Gold 1.0 catalog. 
