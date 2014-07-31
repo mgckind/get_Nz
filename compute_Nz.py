@@ -30,11 +30,13 @@ parser.add_argument("cutsfile", help="Textfile file with cuts, check default.cut
 parser.add_argument("-m", "--mask",
                     help="Numpy file with positional index mask, usually created using cutsfile, overrides cutsfile")
 parser.add_argument("-i", "--ids",
-                    help="Text file (ASCII) with COADD_OBJECTS_ID to be matched (slow), it returns the mask to be used with -m option")
+                    help="Text file (ASCII) with COADD_OBJECTS_ID to be matched (slow), it returns the mask to be "
+                         "used with -m option")
 parser.add_argument("--path", help="Path to the catalogs (default is " + os.getcwd() + ")", default=os.getcwd())
 parser.add_argument("--root", help="Root of output filenames")
-parser.add_argument("--return_pdfs", action="store_true", help="Return a numpy file with the original PDFs for the selected objects, the last\
-                    row  is the redshift positions")
+parser.add_argument("--return_pdfs", action="store_true", help="Return a numpy file with the original PDFs for the "
+                                                               "selected objects, the last row  "
+                                                               "is the redshift positions")
 parser.add_argument("--plot", action="store_true", help="Plot the N(z)")
 args = parser.parse_args()
 
@@ -88,17 +90,23 @@ if args.mask == None:
     if args.ids == None:
         Bmask = mask.get_mask(Mk, fitsfile, output_keys=['TPZ_ZPHOT'])
         masked_data = Bmask['MASK']
-        save('masked_data_' + range_z, masked_data)
+        maskout = 'masked_data_' + range_z
     else:
         Bmask = mask.get_mask(Mk, fitsfile, output_keys=['TPZ_ZPHOT'], input_ids=args.ids)
         masked_data = Bmask['MASK']
-        save('masked_data_ids', masked_data)
+        maskout = 'masked_data_ids'
 else:
     masked_data = load(args.mask)
-    save('masked_data', masked_data)
+    maskout = 'masked_data'
+
+if args.root != None:
+    maskout = args.root+'_'+maskout
+
+# Save used mask
+save(maskout, masked_data)
 
 Ngal = len(masked_data)
-print '*** Number of galaxies : ', Ngal;
+print '*** Number of galaxies : ', Ngal
 print
 
 # Read the sparse representation file
@@ -113,7 +121,7 @@ head = ps.read_header(args.path + 'sva1_gold_1.0.Psparse_all.fits')
 z = head['z']
 dz = zz[1] - zz[0]
 
-# This functions recovers the individual pdfs itself
+# This functions recovers the individual pdfs for the selected data
 if args.return_pdfs:
     print '*** Extracting original PDFs (slow)...\n'
     P = []
@@ -128,10 +136,10 @@ if args.return_pdfs:
             pdfout = 'PDFs_masked_ids_tpz'
     else:
         pdfout = 'PDFs_masked_tpz'
+    if args.root != None:
+        pdfout = args.root + '_' + pdfout
     save(pdfout, array(P))
-#kk=111
-#rep_pdf = ps.reconstruct_pdf_int(SP[kk], head)
-#plt.plot(z,rep_pdf)
+
 
 print '*** Creating Dictionary\n'
 A = ps.create_voigt_dict(head['z'], head['mu'], head['Nmu'], head['sig'], head['Nsig'], head['Nv'])
@@ -152,17 +160,16 @@ N_z = N_z / sum(N_z) / dz
 if args.mask == None:
     if args.ids == None:
         fileout = 'N_z_' + range_z + '_tpz.txt'
-        maskout = 'masked_data_' + range_z + '.npy'
     else:
         fileout = 'N_z_masked_ids_tpz.txt'
-        maskout = 'masked_data_ids.npy'
 else:
     fileout = 'N_z_masked_tpz.txt'
-    maskout = 'masked_data.npy'
 
+if args.root != None:
+    fileout = args.root + '_' + fileout
 print '*** Output Files: \n'
 print '    N_z txt : ' + fileout
-print '    Numpy mask : ' + maskout
+print '    Numpy mask : ' + maskout+'.npy'
 if args.return_pdfs:
     print '    PDFs file : ' + pdfout
 
