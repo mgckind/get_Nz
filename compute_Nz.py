@@ -40,6 +40,10 @@ parser.add_argument("--return_pdfs", action="store_true", help="Return a numpy f
 parser.add_argument("--plot", action="store_true", help="Plot the N(z)")
 parser.add_argument("--save_dict", action="store_true", help="Save dictionary of basis for further calculations in "
                                                              "numpy format ")
+
+parser.add_argument("-o", "--outputs", help="If passed, these are the names (case insentitive) of the output "
+                                            "variables ( not PDFs) for output file, ex.: "
+                                            "--outputs RA DEC TPZ_ZPHOT  etc.", nargs="+")
 args = parser.parse_args()
 
 if args.mask != None and args.ids != None:
@@ -68,13 +72,13 @@ for Line in FM:
 
 if args.mask == None:
     if args.ids == None:
-        print '\n***  Creating mask...\n'
+        print '\033[91m \n***  Creating mask...\n \033[0m'
         for i in xrange(len(Mk)): print Mk.keys()[i], '=', Mk.values()[i]
         print
     else:
-        print '\n***  Creatin mask from ids from file (slow):  ' + args.ids + ' ...\n'
+        print '\033[91m \n***  Creatin mask from ids from file (slow):  ' + args.ids + ' ...\n \033[0m'
 else:
-    print '\n***  Reading mask from : ' + args.mask + ' ...\n'
+    print '\033[91m \n***  Reading mask from : ' + args.mask + ' ...\n \033[0m'
 
 range_z = '%.1f_%.1f' % (Mk['TPZ_ZPHOT'][0], Mk['TPZ_ZPHOT'][1])
 
@@ -89,32 +93,58 @@ fitsfile = args.path + 'sva1_gold_1.0_short_sg.fits'
 # Bmask['TPZ_ZPHOT']
 
 if args.mask == None:
+    if args.outputs != None:
+        okeys = []
+        fmtt = ''
+        header = '# '
+        for i in xrange(len(args.outputs)):
+            kupper = args.outputs[i].upper()
+            if kupper == 'COADD_OBJECTS_ID' or kupper == 'MODEST_CLASS':
+                fmtt += '%d '
+            else:
+                fmtt += '%.6f '
+            header += kupper + ' '
+            okeys.append(kupper)
+    else:
+        okeys = ''
+
     if args.ids == None:
-        Bmask = mask.get_mask(Mk, fitsfile, output_keys=['TPZ_ZPHOT'])
+        Bmask = mask.get_mask(Mk, fitsfile, output_keys=okeys)
         masked_data = Bmask['MASK']
         maskout = 'masked_data_' + range_z
     else:
-        Bmask = mask.get_mask(Mk, fitsfile, output_keys=['TPZ_ZPHOT'], input_ids=args.ids)
+        Bmask = mask.get_mask(Mk, fitsfile, output_keys=okeys, input_ids=args.ids)
         masked_data = Bmask['MASK']
         maskout = 'masked_data_ids'
+
+    if args.outputs != None:
+        fileoutputs = 'Output_catalog.txt'
+        if args.root != None: fileoutputs = args.root + '_' + fileoutputs
+        temp = Bmask[args.outputs[0].upper()]
+        for i in xrange(1, len(args.outputs)):
+            temp = vstack((temp, Bmask[args.outputs[i].upper()]))
+        with open(fileoutputs, 'wb') as fout:
+            fout.write(header + '\n')
+            savetxt(fout, temp.T, fmt=fmtt)
+
 else:
     masked_data = load(args.mask)
     maskout = 'masked_data'
 
 if args.root != None:
-    maskout = args.root+'_'+maskout
+    maskout = args.root + '_' + maskout
 
 # Save used mask
 save(maskout, masked_data)
 
 Ngal = len(masked_data)
-print '*** Number of galaxies : ', Ngal
+print '\033[91m *** Number of galaxies : ' + str(Ngal) + '\033[0m'
 print
 
 # Read the sparse representation file
 # and get the indexes indicated by Bmask
 # And also reads the header
-print '*** Reading Sparse files...\n'
+print '\033[91m *** Reading Sparse files...\n \033[0m'
 P2 = pf.open(args.path + 'sva1_gold_1.0.Psparse_all.fits')
 zz = P2[1].data.field('redshift')
 SP = P2[2].data.field('Sparse_indices')[masked_data]
@@ -125,7 +155,7 @@ dz = zz[1] - zz[0]
 
 # This functions recovers the individual pdfs for the selected data
 if args.return_pdfs:
-    print '*** Extracting original PDFs (slow)...\n'
+    print '\033[91m *** Extracting original PDFs (slow)...\n \033[0m'
     P = []
     for kk in xrange(len(masked_data)):
         rep_pdf = ps.reconstruct_pdf_int(SP[kk], head)
@@ -140,20 +170,19 @@ if args.return_pdfs:
         pdfout = 'PDFs_masked_tpz.fits'
     if args.root != None:
         pdfout = args.root + '_' + pdfout
-    mask.save_PDF(array(P),pdfout)
+    mask.save_PDF(array(P), pdfout)
 
-
-print '*** Creating Dictionary\n'
+print '\033[91m *** Creating Dictionary\n \033[0m'
 if os.path.isfile('basis_dictionary.npy'):
     A = load('basis_dictionary.npy')
 else:
     A = ps.create_voigt_dict(head['z'], head['mu'], head['Nmu'], head['sig'], head['Nsig'], head['Nv'])
     if args.save_dict:
-        save('basis_dictionary',A)
+        save('basis_dictionary', A)
 VALS = linspace(0, 1, head['Ncoef'])
 dVals = VALS[1] - VALS[0]
 
-print '*** Computing coefficients\n'
+print '\033[91m *** Computing coefficients\n \033[0m'
 Coef = zeros(shape(A)[1])
 RR = array(map(ps.get_N, SP))
 for i in xrange(Ngal): Coef[RR[i, 1, :]] += dVals * RR[i, 0, :]
@@ -174,11 +203,14 @@ else:
 
 if args.root != None:
     fileout = args.root + '_' + fileout
-print '*** Output Files: \n'
-print '    N_z txt : ' + fileout
-print '    Numpy mask : ' + maskout+'.npy'
+print '\033[91m *** Output Files: \n \033[0m'
+print '    N_z txt : ' + '\033[92m' + fileout + '\033[0m'
+print '    Numpy mask : ' + '\033[92m' + maskout + '.npy' + '\033[0m'
 if args.return_pdfs:
-    print '    PDFs file : ' + pdfout
+    print '    PDFs file : ' + '\033[92m' + pdfout + '\033[0m'
+if args.outputs != None:
+    print '    Ascii Output catalog : ' + '\033[92m' + fileoutputs + '\033[0m'
+    print '        with following columns:  ' + header[2:]
 
 with open(fileout, 'wb') as fout:
     fout.write(b'# zmid   n(z)\n')
