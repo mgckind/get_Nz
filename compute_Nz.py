@@ -38,6 +38,8 @@ parser.add_argument("--return_pdfs", action="store_true", help="Return a numpy f
                                                                "selected objects, the last row  "
                                                                "is the redshift positions")
 parser.add_argument("--plot", action="store_true", help="Plot the N(z)")
+parser.add_argument("--save_dict", action="store_true", help="Save dictionary of basis for further calculations in "
+                                                             "numpy format ")
 args = parser.parse_args()
 
 if args.mask != None and args.ids != None:
@@ -142,7 +144,12 @@ if args.return_pdfs:
 
 
 print '*** Creating Dictionary\n'
-A = ps.create_voigt_dict(head['z'], head['mu'], head['Nmu'], head['sig'], head['Nsig'], head['Nv'])
+if os.path.isfile('basis_dictionary.npy'):
+    A = load('basis_dictionary.npy')
+else:
+    A = ps.create_voigt_dict(head['z'], head['mu'], head['Nmu'], head['sig'], head['Nsig'], head['Nv'])
+    if args.save_dict:
+        save('basis_dictionary',A)
 VALS = linspace(0, 1, head['Ncoef'])
 dVals = VALS[1] - VALS[0]
 
