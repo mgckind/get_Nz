@@ -133,14 +133,14 @@ if args.return_pdfs:
     P.append(z)
     if args.mask == None:
         if args.ids == None:
-            pdfout = 'PDFs_' + range_z + '_tpz'
+            pdfout = 'PDFs_' + range_z + '_tpz.fits'
         else:
-            pdfout = 'PDFs_masked_ids_tpz'
+            pdfout = 'PDFs_masked_ids_tpz.fits'
     else:
-        pdfout = 'PDFs_masked_tpz'
+        pdfout = 'PDFs_masked_tpz.fits'
     if args.root != None:
         pdfout = args.root + '_' + pdfout
-    save(pdfout, array(P))
+    mask.save_PDF(array(P),pdfout)
 
 
 print '*** Creating Dictionary\n'

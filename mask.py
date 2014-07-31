@@ -3,8 +3,8 @@
 __author__ = "Matias Carrasco Kind"
 from numpy import *
 import pyfits as pf
-import sys, os
-
+import sys
+import datetime
 
 def get_mask(cuts, filename, output_keys='', input_ids=''):
     if cuts.has_key('MODEST_CLASS') and cuts.has_key('TPZ_SG_CLASS'):
@@ -78,3 +78,23 @@ def get_mask(cuts, filename, output_keys='', input_ids=''):
         return output
 
 
+def save_PDF(P, fileoutPDF):
+    """
+    Saves photo-z PDFs
+    """
+
+    zfine = P[-1]
+    pdfs = P
+    head = pf.Header()
+    head['N_TOT'] = len(pdfs) - 1
+    head['DZ'] = zfine[1] - zfine[0]
+    head['NPOINTS'] = len(zfine)
+    head['COMMENT'] = 'The last row of the table are the redshift positions'
+    head['COMMENT'] = 'This file was created using MLZ'
+    head['HISTORY'] = 'Created on ' + datetime.datetime.now().strftime("%Y-%m-%d  %H:%M")
+    fmt = '%dE' % len(zfine)
+    col0 = pf.Column(name='PDF values', format=fmt, array=pdfs)
+    table0 = pf.new_table(pf.ColDefs([col0]))
+    prihdu = pf.PrimaryHDU(header=head)
+    hdulist = pf.HDUList([prihdu, table0])
+    hdulist.writeto(fileoutPDF, clobber=True)
