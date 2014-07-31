@@ -60,6 +60,8 @@ def get_mask(cuts, filename, output_keys='', input_ids=''):
         mask = zeros(G[1].header['NAXIS2'], dtype='bool')
         G.close()
         in_ids = loadtxt(input_ids, dtype='int')
+        if not shape(in_ids):
+            in_ids = array([in_ids])
         for k in in_ids:
             mtemp = TB.field('COADD_OBJECTS_ID') == k
             mask += mtemp
