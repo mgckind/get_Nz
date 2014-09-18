@@ -10,7 +10,7 @@ it ca be used wot a pre-defined mask or from a list of coadd_object_ids
 You need :
 * **numpy**
 * **scipy** (optional)
-* [**pyfits**](http://www.stsci.edu/institute/software_hardware/pyfits) or **astropy**
+* [**pyfits**](http://www.stsci.edu/institute/software_hardware/pyfits)
 * matplotlib (for plotting)
 
 ### Use
