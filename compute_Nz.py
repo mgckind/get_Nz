@@ -76,7 +76,7 @@ if args.mask == None:
         for i in xrange(len(Mk)): print Mk.keys()[i], '=', Mk.values()[i]
         print
     else:
-        print '\033[91m \n***  Creatin mask from ids from file (slow):  ' + args.ids + ' ...\n \033[0m'
+        print '\033[91m \n***  Creating mask from ids from file (slow):  ' + args.ids + ' ...\n \033[0m'
 else:
     print '\033[91m \n***  Reading mask from : ' + args.mask + ' ...\n \033[0m'
 
