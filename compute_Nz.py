@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #Code to compute N(z) from the sparse representation
 # presented in http://adsabs.harvard.edu/abs/2014MNRAS.441.3550C
 # using TPZ (http://lcdm.astro.illinois.edu/code/mlz.html)
@@ -11,7 +11,16 @@ import pyfits as pf
 import pdf_storage as ps
 import mask
 import sys, os
+import random
 import argparse
+
+# Name of the catalog with few columns,
+# This includes, RA,DEC, MAG_AUTO_I, MAG_DETMODEL_[G,R,I,Z], MODEST_CLASS, COADD_OBJECTS_ID
+# and TPZ_ZPHOT (the mean of the redshift pdf) and TPZ_ZCONF (similar to ODDS in BPZ is a 0 to 1 value)
+# quantifying the shape of the pdf around the mean, usually one picks value with ZCONF > 0.5
+# Make sure to indicate the path to these files 
+fitsfile = 'sva1_gold_1.0_short_sg.v2.fits'
+sparsefile = 'sva1_gold_1.0.Psparse_all.v2.fits'
 
 
 class MyParser(argparse.ArgumentParser):
@@ -82,11 +91,7 @@ else:
 
 range_z = '%.1f_%.1f' % (Mk['TPZ_ZPHOT'][0], Mk['TPZ_ZPHOT'][1])
 
-# Name of the catalog with few columns,
-# This includes, RA,DEC, MAG_AUTO_I, MAG_DETMODEL_[G,R,I,Z], MODEST_CLASS, COADD_OBJECTS_ID
-# and TPZ_ZPHOT (the mean of the redshift pdf) and TPZ_ZCONF (similar to ODDS in BPZ is a 0 to 1 value)
-# quantifying the shape of the pdf around the mean, usually one picks value with ZCONF > 0.5
-fitsfile = args.path + 'sva1_gold_1.0_short_sg.fits'
+
 
 # Return the mask given the cuts defined in Mk, output_keys are extra returns
 # (optional) masked, in that case those values will be: e.g.: Bmask['RA'] or
@@ -109,11 +114,11 @@ if args.mask == None:
         okeys = ''
 
     if args.ids == None:
-        Bmask = mask.get_mask(Mk, fitsfile, output_keys=okeys)
+        Bmask = mask.get_mask(Mk, args.path + fitsfile, output_keys=okeys)
         masked_data = Bmask['MASK']
         maskout = 'masked_data_' + range_z
     else:
-        Bmask = mask.get_mask(Mk, fitsfile, output_keys=okeys, input_ids=args.ids)
+        Bmask = mask.get_mask(Mk, args.path + fitsfile, output_keys=okeys, input_ids=args.ids)
         masked_data = Bmask['MASK']
         maskout = 'masked_data_ids'
 
@@ -144,12 +149,13 @@ print
 # Read the sparse representation file
 # and get the indexes indicated by Bmask
 # And also reads the header
-print '\033[91m *** Reading Sparse files...\n \033[0m'
-P2 = pf.open(args.path + 'sva1_gold_1.0.Psparse_all.fits')
+print '\033[91m *** Reading Sparse file...\n \033[0m'
+P2 = pf.open(args.path + sparsefile)
 zz = P2[1].data.field('redshift')
 SP = P2[2].data.field('Sparse_indices')[masked_data]
 P2.close()
-head = ps.read_header(args.path + 'sva1_gold_1.0.Psparse_all.fits')
+
+head = ps.read_header(args.path + sparsefile)
 z = head['z']
 dz = zz[1] - zz[0]
 
@@ -182,13 +188,25 @@ else:
 VALS = linspace(0, 1, head['Ncoef'])
 dVals = VALS[1] - VALS[0]
 
+
+
 print '\033[91m *** Computing coefficients\n \033[0m'
+
+
 Coef = zeros(shape(A)[1])
 RR = array(map(ps.get_N, SP))
-for i in xrange(Ngal): Coef[RR[i, 1, :]] += dVals * RR[i, 0, :]
+print len(RR)
+for i in xrange(shape(RR)[0]):
+    Coef[RR[i, 1, 1:]] += dVals * RR[i, 0, 1:] * RR[i][0][0]*dVals
+    Coef[RR[i, 1, 0]] += RR[i][0][0] * dVals
 
 N_z = dot(A, Coef)
+N_z[:4]=0. #safety harmless clip 
 N_z = N_z / sum(N_z) / dz
+
+#bigN=array(bigN)
+#N_z=mean(bigN,axis=0)
+#N_ze=std(bigN,axis=0)
 
 # Saving dN/dz to a file
 # the first column is the center of the dz bin and the second colum tne value

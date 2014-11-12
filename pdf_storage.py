@@ -1,4 +1,3 @@
-# Reference: http://adsabs.harvard.edu/abs/2014MNRAS.441.3550C
 __author__ = 'Matias Carrasco Kind'
 """
 .. module:: pdf_storage
@@ -258,6 +257,9 @@ def reconstruct_pdf_int(long_index, header, cut=1.e-5):
     spi = sp_ind[:, 0]
     Dind2 = sp_ind[:, 1]
     vals = spi * dVals
+    ####
+    vals[0]=1.
+    ####
     rep_pdf = reconstruct_pdf_v(Dind2, vals, zfine, mu, Nmu, sigma, Nsigma, Nv)
     return rep_pdf
 

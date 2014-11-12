@@ -9,7 +9,7 @@ it ca be used wot a pre-defined mask or from a list of coadd_object_ids
 ### Requirements
 You need :
 * **numpy**
-* **scipy** (optional)
+* **scipy** (for cross matching ids)
 * [**pyfits**](http://www.stsci.edu/institute/software_hardware/pyfits)
 * matplotlib (for plotting)
 
@@ -34,6 +34,11 @@ To get the data go the the DES Wiki (Under photo-z wiki)
 
 ### Note
 Check https://github.com/mgckind/SparsePz for more information about the sparse representation
+
+### New
+
+* Fixed lookup of objects ids
+* Fixed minor bugs for optimization
 
 #### Contact
 Matias Carrasco Kind

@@ -5,6 +5,10 @@ from numpy import *
 import pyfits as pf
 import sys
 import datetime
+import time
+
+
+
 
 def get_mask(cuts, filename, output_keys='', input_ids=''):
     if cuts.has_key('MODEST_CLASS') and cuts.has_key('TPZ_SG_CLASS'):
@@ -56,25 +60,37 @@ def get_mask(cuts, filename, output_keys='', input_ids=''):
         del mask, TB
         return output
     else:
-        TB = G[1].data
+        import scipy.spatial as ss
+        #TB = G[1].data
         mask = zeros(G[1].header['NAXIS2'], dtype='bool')
-        G.close()
+        #G.close()
+        t1=time.time()
         in_ids = loadtxt(input_ids, dtype='int')
-        if not shape(in_ids):
-            in_ids = array([in_ids])
-        for k in in_ids:
-            mtemp = TB.field('COADD_OBJECTS_ID') == k
-            mask += mtemp
+        nt = len(in_ids)
+        in_ids = in_ids.reshape(nt,1)
+        #if not shape(in_ids):
+            #in_ids = array([in_ids])
+        cid = G[1].data['COADD_OBJECTS_ID'].reshape(len(mask),1)
+        kdt = ss.KDTree(cid, leafsize = 100)
+        s1,s2 = kdt.query(in_ids)
+        mask [s2] = True
+        print time.time() - t1,' seconds'
+        print 
+        print ' MASKED WILL BE SAVED IN NUMPY FORMAT FOR FUTURE RUNS'
+        print
         output = {}
         output['MASK'] = where(mask * 1. == 1)[0]
         if output_keys != '':
+            TB = G[1].data
+            G.close()
             for k in output_keys:
                 if k.find('-') == -1:
                     output[k] = TB.field(k)[mask]
                 else:
                     minus = k.find('-')
                     output[k] = TB.field(k[:minus])[mask] - TB.field(k[minus + 1:])[mask]
-        del mask, TB
+            del TB
+        del mask
         return output
 
 
