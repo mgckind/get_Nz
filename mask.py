@@ -71,7 +71,7 @@ def get_mask(cuts, filename, output_keys='', input_ids=''):
         #if not shape(in_ids):
             #in_ids = array([in_ids])
         cid = G[1].data['COADD_OBJECTS_ID'].reshape(len(mask),1)
-        kdt = ss.KDTree(cid, leafsize = 100)
+        kdt = ss.cKDTree(cid, leafsize = 10)
         s1,s2 = kdt.query(in_ids)
         mask [s2] = True
         print time.time() - t1,' seconds'
