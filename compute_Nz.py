@@ -19,8 +19,8 @@ import argparse
 # and TPZ_ZPHOT (the mean of the redshift pdf) and TPZ_ZCONF (similar to ODDS in BPZ is a 0 to 1 value)
 # quantifying the shape of the pdf around the mean, usually one picks value with ZCONF > 0.5
 # Make sure to indicate the path to these files 
-fitsfile = 'sva1_gold_1.0_short_sg.v2.fits'
-sparsefile = 'sva1_gold_1.0.Psparse_all.v2.fits'
+fitsfile = 'sva1_gold_1.0.2a_short_sg.v3.fits'
+sparsefile = 'sva1_gold_1.0.2a.Psparse_all.v3.fits'
 
 
 class MyParser(argparse.ArgumentParser):
